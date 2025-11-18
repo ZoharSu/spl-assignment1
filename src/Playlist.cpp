@@ -2,19 +2,21 @@
 #include "AudioTrack.h"
 #include <iostream>
 #include <algorithm>
+
+PlaylistNode::~PlaylistNode() {
+    delete track;
+}
+
 Playlist::Playlist(const std::string& name) 
     : head(nullptr), playlist_name(name), track_count(0) {
     std::cout << "Created playlist: " << name << std::endl;
 }
-// TODO: Fix memory leaks!
-// Students must fix this in Phase 1
-Playlist::~Playlist() {
-    for (PlaylistNode *prev = head; prev != nullptr; prev = head) {
-        if (head != nullptr)
-            head = head->next;
 
-        delete prev->track;
-        delete prev;
+Playlist::~Playlist() {
+    while (head != nullptr) {
+        PlaylistNode *next = head->next;;
+        delete head;
+        head = next;
     }
     #ifdef DEBUG
     std::cout << "Destroying playlist: " << playlist_name << std::endl;
@@ -57,7 +59,6 @@ void Playlist::remove_track(const std::string& title) {
             head = current->next;
         }
 
-        delete current->track;
         delete current;
         track_count--;
         std::cout << "Removed '" << title << "' from playlist" << std::endl;

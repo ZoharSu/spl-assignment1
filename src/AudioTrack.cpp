@@ -36,7 +36,7 @@ AudioTrack::~AudioTrack() {
     std::cout << "AudioTrack destructor called for: " << title << std::endl;
     #endif
     // Your code here...
-    delete waveform_data;
+    delete[] waveform_data;
 }
 
 AudioTrack::AudioTrack(const AudioTrack& other)
@@ -60,7 +60,7 @@ AudioTrack& AudioTrack::operator=(const AudioTrack& other) {
     #endif
     // Your code here...
     if (this == &other) return *this;
-    delete waveform_data;
+    delete[] waveform_data;
 
     title = other.title;
     artists = other.artists;
