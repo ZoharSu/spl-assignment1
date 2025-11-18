@@ -2,6 +2,9 @@
 #include "AudioTrack.h"
 #include <iostream>
 #include <algorithm>
+PlaylistNode::~PlaylistNode() {
+    delete track;
+}
 Playlist::Playlist(const std::string& name) 
     : head(nullptr), playlist_name(name), track_count(0) {
     std::cout << "Created playlist: " << name << std::endl;
@@ -12,6 +15,13 @@ Playlist::~Playlist() {
     #ifdef DEBUG
     std::cout << "Destroying playlist: " << playlist_name << std::endl;
     #endif
+    
+    while (head != nullptr)
+    {
+        PlaylistNode* next = head->next;
+        delete head;
+        head = next;
+    }
 }
 
 void Playlist::add_track(AudioTrack* track) {
@@ -49,6 +59,7 @@ void Playlist::remove_track(const std::string& title) {
         } else {
             head = current->next;
         }
+        delete current;
 
         track_count--;
         std::cout << "Removed '" << title << "' from playlist" << std::endl;

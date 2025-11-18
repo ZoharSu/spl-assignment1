@@ -15,7 +15,7 @@
     // Disable inline suggestions and completions from AI
     "editor.inlineSuggest.enabled": false,
     "editor.quickSuggestions": {
-        "other": false,
+        "other": true,
         "comments": false,
         "strings": false
     },
@@ -33,14 +33,15 @@
     
     // C++ specific settings
     "C_Cpp.intelliSenseEngine": "default",
-    "C_Cpp.autocomplete": "disabled",
+    "C_Cpp.autocomplete": "default",
     "C_Cpp.errorSquiggles": "enabled",
     
     // File associations
     "files.associations": {
         "*.h": "cpp",
         "*.cpp": "cpp",
-        "*.txt": "plaintext"
+        "*.txt": "plaintext",
+        "iostream": "cpp"
     },
     
     // Editor settings for academic integrity

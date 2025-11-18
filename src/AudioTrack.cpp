@@ -36,15 +36,23 @@ AudioTrack::~AudioTrack() {
     std::cout << "AudioTrack destructor called for: " << title << std::endl;
     #endif
     // Your code here...
+
+    delete waveform_data;
 }
 
 AudioTrack::AudioTrack(const AudioTrack& other)
-{
+:   title(other.title),
+    artists(other.artists),
+    duration_seconds(other.duration_seconds),
+    bpm(other.bpm),
+    waveform_size(other.waveform_size)
+    {
     // TODO: Implement the copy constructor
     #ifdef DEBUG
     std::cout << "AudioTrack copy constructor called for: " << other.title << std::endl;
     #endif
     // Your code here...
+    
 }
 
 AudioTrack& AudioTrack::operator=(const AudioTrack& other) {
@@ -52,6 +60,7 @@ AudioTrack& AudioTrack::operator=(const AudioTrack& other) {
     #ifdef DEBUG
     std::cout << "AudioTrack copy assignment called for: " << other.title << std::endl;
     #endif
+
     // Your code here...
     return *this;
 }
