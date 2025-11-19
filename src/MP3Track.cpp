@@ -29,7 +29,7 @@ void MP3Track::analyze_beatgrid() {
      std::cout << "[MP3Track::analyze_beatgrid] Analyzing beat grid for: \"" << title << "\"\n";
     // TODO: Implement MP3-specific beat detection analysis
     // NOTE: Use exactly 2 spaces before each arrow (→) character
-    double beats = (duration_second / 60.0) * bpm;
+    double beats = (duration_seconds / 60.0) * bpm;
     double precision = bitrate / 320.0;
     std::cout << "  → Estimated beats: " << beats << std::endl;
     std::cout << "  → Compression precision factor: " << precision << std::endl;
