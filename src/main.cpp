@@ -188,11 +188,9 @@ int main(int argc, char* argv[]) {
         
         // Test each phase individually
         test_phase_1_memory_leaks();
-        #if 0
         test_phase_2_rule_of_5();
         test_phase_3();
         demonstrate_polymorphism();
-        #endif
         std::cout << "\n(Set 'run_software' to true in main.cpp to run the full interactive session.)\n" << std::endl;
     }
     return 0;

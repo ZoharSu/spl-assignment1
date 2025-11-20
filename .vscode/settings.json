@@ -13,7 +13,7 @@
     },
     
     // Disable inline suggestions and completions from AI
-    "editor.inlineSuggest.enabled": false,
+    "editor.inlineSuggest.enabled": true,
     "editor.quickSuggestions": {
         "other": true,
         "comments": false,
@@ -41,7 +41,12 @@
         "*.h": "cpp",
         "*.cpp": "cpp",
         "*.txt": "plaintext",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "vector": "cpp",
+        "functional": "cpp",
+        "random": "cpp",
+        "chrono": "cpp",
+        "format": "cpp"
     },
     
     // Editor settings for academic integrity
