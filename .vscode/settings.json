@@ -46,7 +46,9 @@
         "functional": "cpp",
         "random": "cpp",
         "chrono": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "stdexcept": "cpp",
+        "tuple": "cpp"
     },
     
     // Editor settings for academic integrity

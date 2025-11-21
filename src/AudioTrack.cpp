@@ -96,6 +96,8 @@ AudioTrack::AudioTrack(AudioTrack&& other) noexcept
     // Your code here...
     other.waveform_data = nullptr;
     other.waveform_size = 0;
+    other.bpm = 0;
+    other.duration_seconds = 0;
 }
 
 AudioTrack& AudioTrack::operator=(AudioTrack&& other) noexcept {
@@ -118,6 +120,8 @@ AudioTrack& AudioTrack::operator=(AudioTrack&& other) noexcept {
 
         other.waveform_data = nullptr;
         other.waveform_size = 0;
+        other.bpm = 0;
+        other.duration_seconds = 0;
     }
     return *this;
 }

@@ -50,16 +50,12 @@ double MP3Track::get_quality_score() const {
     if (bitrate < 128) base_score -= 10;
 
     if (base_score < 0) base_score = 0;
-    if (base_score > 100) base_score = 100;
+    else if (base_score > 100) base_score = 100;
 
     return base_score; // Replace with your implementation
 }
 
 PointerWrapper<AudioTrack> MP3Track::clone() const {
     // TODO: Implement polymorphic cloning
-    MP3Track* clone{new MP3Track(*this)};
-    clone->bitrate = bitrate;
-    clone->has_id3_tags = has_id3_tags;
-
     return PointerWrapper<AudioTrack>(new MP3Track(*this)); // Replace with your implementation
 }
