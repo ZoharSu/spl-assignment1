@@ -44,10 +44,9 @@ int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
     clone.load();
     clone.analyze_beatgrid();
 
-    int bpm_diff = clone.get_bpm() - decks[active_deck].get_bpm();
-    if (bpm_diff < 0) bpm_diff *= -1; // apply absolute value
+        sync_bpm(clone);
 
-     if (auto_sync && bpm_diff >= bpm_tolerance)
+    if (auto_sync && !can_mix_tracks(clone))
         sync_bpm(clone);
 
     decks[i] = clone.release();
@@ -91,8 +90,10 @@ void MixingEngineService::displayDeckStatus() const {
  * @return: true if BPM difference <= tolerance, false otherwise
  */
 bool MixingEngineService::can_mix_tracks(const PointerWrapper<AudioTrack>& track) const {
-    // Your implementation here
-    return false; // Placeholder
+    int bpm_diff = clone.get_bpm() - decks[active_deck].get_bpm();
+    if (bpm_diff < 0) bpm_diff *= -1; // apply absolute value
+
+    return bpm_diff <= bpm_tolerance;
 }
 
 /**
