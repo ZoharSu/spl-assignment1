@@ -7,16 +7,22 @@
  * TODO: Implement MixingEngineService constructor
  */
 MixingEngineService::MixingEngineService()
-    : decks(), active_deck(1), auto_sync(false), bpm_tolerance(0)
+    : decks{nullptr, nullptr}, active_deck(0), auto_sync(false), bpm_tolerance(0)
 {
-    // Your implementation here
+    std::cout << "[MixingEngineService] Initialized with 2 empty decks" << std::endl;
 }
 
 /**
  * TODO: Implement MixingEngineService destructor
  */
 MixingEngineService::~MixingEngineService() {
-    // Your implementation here
+    std::cout << "[MixingEngineService] Cleaning up decks..." << std::endl;
+    for (int i = 0; i < 2; i++) {
+        if (decks[i] != nullptr) {
+            delete decks[i];
+            decks[i] = nullptr;
+        }
+    }
 }
 
 
@@ -26,8 +32,39 @@ MixingEngineService::~MixingEngineService() {
  * @return: Index of the deck where track was loaded, or -1 on failure
  */
 int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
-    // Your implementation here
-    return -1; // Placeholder
+    std::cout << "\n=== Loading Track to Deck === " << std::endl;
+    PointerWrapper<AudioTrack> clone = track.clone();
+    if (!clone)
+        return -1;
+    int i = 1 - active_deck;
+    std::cout << "[Deck Switch] Target deck: " << active_deck << std::endl;
+
+    if (decks[i] != nullptr)
+        delete decks[i];
+    clone.load();
+    clone.analyze_beatgrid();
+
+    int bpm_diff = clone.get_bpm() - decks[active_deck].get_bpm();
+    if (bpm_diff < 0) bpm_diff *= -1; // apply absolute value
+
+     if (auto_sync && bpm_diff >= bpm_tolerance)
+        sync_bpm(clone);
+
+    decks[i] = clone.release();
+
+    std::cout << "[Load Complete] ’" << track.get_title()
+              << "’ is now loaded on deck " << i << std::endl;
+
+    if (decks[active_deck] != nullptr) {
+        std::cout << "[Unload] Unloading previous deck " << active_deck <<
+            " (" << decks[active_deck].get_title() << ")" << std::endl;
+        delete decks[active_deck];
+        decks[active_deck] = nullptr;
+    }
+    std::cout << "[Active Deck] Switched to deck " << i << std::endl;
+    active_deck = i;
+
+    return 0;
 }
 
 /**
