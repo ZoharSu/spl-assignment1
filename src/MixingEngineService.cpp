@@ -36,15 +36,15 @@ int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
     PointerWrapper<AudioTrack> clone = track.clone();
     if (!clone)
         return -1;
+
     int i = 1 - active_deck;
     std::cout << "[Deck Switch] Target deck: " << active_deck << std::endl;
 
     if (decks[i] != nullptr)
         delete decks[i];
-    clone.load();
-    clone.analyze_beatgrid();
 
-        sync_bpm(clone);
+    clone->load();
+    clone->analyze_beatgrid();
 
     if (auto_sync && !can_mix_tracks(clone))
         sync_bpm(clone);
@@ -56,7 +56,7 @@ int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
 
     if (decks[active_deck] != nullptr) {
         std::cout << "[Unload] Unloading previous deck " << active_deck <<
-            " (" << decks[active_deck].get_title() << ")" << std::endl;
+            " (" << decks[active_deck]->get_title() << ")" << std::endl;
         delete decks[active_deck];
         decks[active_deck] = nullptr;
     }
@@ -90,7 +90,7 @@ void MixingEngineService::displayDeckStatus() const {
  * @return: true if BPM difference <= tolerance, false otherwise
  */
 bool MixingEngineService::can_mix_tracks(const PointerWrapper<AudioTrack>& track) const {
-    int bpm_diff = clone.get_bpm() - decks[active_deck].get_bpm();
+    int bpm_diff = track->get_bpm() - decks[active_deck]->get_bpm();
     if (bpm_diff < 0) bpm_diff *= -1; // apply absolute value
 
     return bpm_diff <= bpm_tolerance;
