@@ -14,8 +14,24 @@ DJLibraryService::DJLibraryService(const Playlist& playlist)
  * @param library_tracks Vector of track info from config
  */
 void DJLibraryService::buildLibrary(const std::vector<SessionConfig::TrackInfo>& library_tracks) {
-    //Todo: Implement buildLibrary method
-    std::cout << "TODO: Implement DJLibraryService::buildLibrary method\n"<< library_tracks.size() << " tracks to be loaded into library.\n";
+    for (const SessionConfig::TrackInfo& track : library_tracks) {
+        if (track.type == "MP3") {
+            MP3Track *t = new MP3Track {
+                track.title, track.artists, track.duration_seconds,
+                track.bpm, track.extra_param1, track.extra_param2
+            };
+            std::cout << "MP3Track created: " << t->get_bitrate() << " kbps" << std::endl;
+            library.push_back(t);
+        } else { // WAV
+            WAVTrack *t = new WAVTrack {
+                track.title, track.artists, track.duration_seconds,
+                track.bpm, track.extra_param1, track.extra_param2
+            };
+            std::cout << "WAVTrack created: " << t->get_sample_rate() << "Hz/"
+                      << t->get_bit_depth() << "bit" << std::endl;
+            library.push_back(t);
+        }
+    }
 }
 
 /**
@@ -53,22 +69,24 @@ Playlist& DJLibraryService::getPlaylist() {
  * HINT: Leverage Playlist's find_track method
  */
 AudioTrack* DJLibraryService::findTrack(const std::string& track_title) {
-    // Your implementation here
-    return nullptr; // Placeholder
+    return playlist.find_track(track_title);
 }
 
 void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name, 
                                                const std::vector<int>& track_indices) {
     // Your implementation here
     // For now, add a placeholder to fix the linker error
-    (void)playlist_name;  // Suppress unused parameter warning
     (void)track_indices;  // Suppress unused parameter warning
+    std::cout << "[INFO] Loading playlist: " << playlist_name << std::endl;
 }
 /**
  * TODO: Implement getTrackTitles method
  * @return Vector of track titles in the playlist
  */
 std::vector<std::string> DJLibraryService::getTrackTitles() const {
-    // Your implementation here
-    return std::vector<std::string>(); // Placeholder
+    std::vector<std::string> v;
+    for (AudioTrack* t : playlist.getTracks())
+        v.push_back(t->get_title());
+
+    return v;
 }
