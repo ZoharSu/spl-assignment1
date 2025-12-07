@@ -74,10 +74,30 @@ AudioTrack* DJLibraryService::findTrack(const std::string& track_title) {
 
 void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name, 
                                                const std::vector<int>& track_indices) {
-    // Your implementation here
-    // For now, add a placeholder to fix the linker error
-    (void)track_indices;  // Suppress unused parameter warning
     std::cout << "[INFO] Loading playlist: " << playlist_name << std::endl;
+    Playlist p(playlist_name);
+    int count = 0;
+
+    for (int i : track_indices) {
+        if (i < 1 ||  i > library.size()) {
+            std::cout << "[WARNING] Invalid track index: " << i << std::endl;
+            continue;
+        }
+        AudioTrack *track = library[i - 1]->clone().release();
+        if (track == nullptr) {
+            std::cout << "[ERROR] Clone failed at loadPlaylistFromIndices" << std::endl;
+            continue;
+        }
+        track->load();
+        track->analyze_beatgrid();
+        playlist.add_track(track);
+
+        count++;
+        std::cout << "Added ’" << track->get_title() << "’ to playlist ’"
+                               << playlist_name << "’" << std::endl;
+    }
+    std::cout << "[INFO] Playlist loaded: " << playlist_name
+              << " (" << count << " tracks)" << std::endl;
 }
 /**
  * TODO: Implement getTrackTitles method
