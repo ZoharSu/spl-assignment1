@@ -106,8 +106,10 @@ bool MixingEngineService::can_mix_tracks(const PointerWrapper<AudioTrack>& track
  */
 void MixingEngineService::sync_bpm(const PointerWrapper<AudioTrack>& track) const {
     // Your implementation here
-    if (decks[active_deck] == nullptr || !track)
+    if (decks[active_deck] == nullptr || !track) {
+        std::cout << "[Sync BPM] Cannot sync - one of the decks is empty." << std::endl;
         return;
+    }
 
     int track_bpm = track->get_bpm();
     int avg_bpm = (track_bpm + decks[active_deck]->get_bpm()) / 2;
