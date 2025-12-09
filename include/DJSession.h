@@ -120,4 +120,7 @@ private:
      * @brief Print final session summary with statistics
      */
     void print_session_summary() const;
+
+    std::vector<std::string> sortStrings(std::vector<std::string> s);
+    bool strLessThan(std::string lhs, std::string rhs);
 };

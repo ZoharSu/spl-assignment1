@@ -151,8 +151,41 @@ void DJSession::simulate_dj_performance() {
     std::cout << "Cache Capacity: " << session_config.controller_cache_size << " slots (LRU policy)" << std::endl;
     std::cout << "\n--- Processing Tracks ---" << std::endl;
 
-    std::cout << "TODO: Implement the DJ performance simulation workflow here." << std::endl;
-    // Your implementation here
+    std::vector<std::string> names;
+    unsigned long int i = 0;
+    if (play_all) {
+        for (const auto& pair : session_config.playlists)
+            names.push_back(pair.first);
+
+        names = sortStrings(names);
+    }
+
+    while (true) {
+        std::string selected;
+        if (play_all && i >= names.size())
+            break;
+
+        if (play_all)
+            selected = names[i++];
+        else selected = display_playlist_menu_from_config();
+
+        if (!play_all && selected.empty())
+            break;
+
+        if (!load_playlist(selected)) {
+            std::cout << "[ERROR] Failed to load Playlist \"" << selected << "\"" << std::endl;
+            continue;
+        }
+
+        for (AudioTrack *t : library_service.getPlaylist().getTracks()) { 
+            std::cout << "\n–- Processing: <track_title> –-";
+            stats.tracks_processed++;
+            load_track_to_controller(t->get_title());
+            load_track_to_mixer_deck(t->get_title());
+        }
+
+        print_session_summary();
+    }
 }
 
 
@@ -241,4 +274,29 @@ void DJSession::print_session_summary() const {
     std::cout << "Transitions: " << stats.transitions << std::endl;
     std::cout << "Errors: " << stats.errors << std::endl;
     std::cout << "=== Session Complete ===" << std::endl;
+}
+
+std::vector<std::string> DJSession::sortStrings(std::vector<std::string> names) {
+    unsigned long int i, j, min;
+    for (i = 0; i < names.size(); i++) {
+        min = i;
+        for (j = i; j < names.size(); j++)
+            if (strLessThan(names[j], names[min]))
+                min = j;
+
+        std::string tmp = names[i];
+        names[i] = names[min];
+        names[min] = tmp;
+    }
+
+    return names;
+}
+
+bool DJSession::strLessThan(std::string lhs, std::string rhs) {
+    unsigned long int i;
+    for (i = 0; i < rhs.size(); i++)
+        if (i >= lhs.size() || lhs[i] < rhs[i])
+            return true;
+
+    return false;
 }
