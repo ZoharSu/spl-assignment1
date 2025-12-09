@@ -15,7 +15,7 @@ DJLibraryService::DJLibraryService(const Playlist& playlist)
  */
 
 DJLibraryService::~DJLibraryService() {
-    for (int i = 0; i < library.size(); i++) {
+    for (size_t i = 0; i < library.size(); i++) {
         AudioTrack* tmp = library[i];
         library[i] = nullptr;
         delete tmp;
@@ -84,7 +84,7 @@ void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name,
     // Your implementation here
     std::cout << "[INFO] Loading playlist: " << playlist_name << std::endl;
     playlist = Playlist{playlist_name}; // IMPLEMENT MOVE ASSIGNMENT ON PLAYLIST
-    for (int i : track_indices) {
+    for (size_t i : track_indices) {
         if (i >= 1 && i <= library.size()) {
             AudioTrack* t = library[i-1];
             PointerWrapper<AudioTrack> clone = t->clone();
