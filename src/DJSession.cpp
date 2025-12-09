@@ -158,11 +158,40 @@ void DJSession::simulate_dj_performance() {
 
     // std::cout << "TODO: Implement the DJ performance simulation workflow here." << std::endl;
     // Your implementation here
+    std::vector<std::string> names;
+    size_t i = 0;
     if (play_all) {
-        
-    }
-}
+        for (const auto& p : session_config.playlists)
+            names.push_back(p.first);
 
+        std::sort(names.begin(), names.end());
+    }
+
+    while(true) {
+        std::string selected;
+        if (play_all && i >= names.size())
+            break;
+
+        if (play_all)
+            selected = names[i++];
+        else selected = display_playlist_menu_from_config();
+
+        if (!play_all && selected.empty())
+            break;
+        if (!load_playlist(selected)) {
+            std::cerr << "[ERROR] Playlist: \"" << selected << "\" failed to load" << std::endl;
+        } else {
+            for (const std::string& title : track_titles) {
+                std::cout << "\n-- Processing: " << title << " --" << std::endl;
+                stats.tracks_processed++;
+                load_track_to_controller(title);
+                load_track_to_mixer_deck(title);
+            }
+        }
+        print_session_summary();
+    }
+    std::cout << "Session cancelled by user or all playlists played." << std::endl;
+}
 
 /* 
  * Helper method to load session configuration from file

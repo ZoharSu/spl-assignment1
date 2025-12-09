@@ -50,6 +50,13 @@ public:
      */
     std::vector<std::string> getTrackTitles() const;
 
+    // Rule of 5
+    DJLibraryService(const DJLibraryService&) = delete;
+    DJLibraryService& operator=(const DJLibraryService&) = delete;
+
+    DJLibraryService(DJLibraryService&&) = delete;
+    DJLibraryService& operator=(DJLibraryService&&) = delete;
+
 private:
     Playlist playlist;
     std::vector<AudioTrack*> library;  // Library of all tracks (owned)

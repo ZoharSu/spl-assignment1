@@ -136,3 +136,83 @@ std::vector<AudioTrack*> Playlist::getTracks() const {
     }
     return tracks;
 }
+
+// Rule of 5
+
+Playlist::Playlist(const Playlist& other)
+    : head(nullptr)
+    , playlist_name(other.playlist_name)
+    , track_count(other.track_count)
+{
+    AudioTrack *t = other.head->track->clone().release();
+    head = new PlaylistNode(t);
+
+    PlaylistNode *this_iter = head;
+    PlaylistNode *other_next = other.head->next;
+
+    while (other_next != nullptr) {
+        t = other_next->track->clone().release();
+        this_iter->next = new PlaylistNode(t);
+
+        this_iter = this_iter->next;
+        other_next = other_next->next;
+    }
+}
+
+Playlist& Playlist::operator=(const Playlist& other) {
+    playlist_name = other.playlist_name;
+    track_count = other.track_count;
+
+    while (head != nullptr)
+    {
+        PlaylistNode* next = head->next;
+        delete head->track;
+        delete head;
+        head = next;
+    }
+
+    AudioTrack *t = other.head->track->clone().release();
+    head = new PlaylistNode(t);
+    PlaylistNode *this_iter = head;
+    PlaylistNode *other_next = other.head->next;
+
+    while (other_next != nullptr) {
+        t = other_next->track->clone().release();
+        this_iter->next = new PlaylistNode(t);
+
+        this_iter = this_iter->next;
+        other_next = other_next->next;
+    }
+
+    return *this;
+}
+
+Playlist::Playlist(Playlist&& other)
+    : head(other.head)
+    , playlist_name(other.playlist_name)
+    , track_count(other.track_count)
+{
+    other.track_count = 0;
+    other.playlist_name = "";
+    other.head = nullptr;
+}
+
+Playlist& Playlist::operator=(Playlist&& other) {
+    while (head != nullptr)
+    {
+        PlaylistNode* next = head->next;
+        delete head->track;
+        delete head;
+        head = next;
+    }
+
+    track_count = other.track_count;
+    playlist_name = other.playlist_name;
+    head = other.head;
+
+    other.track_count = 0;
+    other.playlist_name = "";
+    other.head = nullptr;
+
+    return *this;
+}

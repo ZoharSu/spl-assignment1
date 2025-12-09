@@ -86,6 +86,15 @@ public:
      */
     std::vector<AudioTrack*> getTracks() const;
 
+    /**
+     * Implement Rule of 5
+     */
+
+    Playlist(const Playlist&);
+    Playlist& operator=(const Playlist&);
+    Playlist(Playlist&&);
+    Playlist& operator=(Playlist&&);
+
 };
 
 
