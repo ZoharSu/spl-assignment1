@@ -5,6 +5,7 @@
 #include <iostream>
 #include <memory>
 #include <filesystem>
+#include <algorithm>
 
 
 DJLibraryService::DJLibraryService(const Playlist& playlist) 
@@ -29,12 +30,9 @@ void DJLibraryService::buildLibrary(const std::vector<SessionConfig::TrackInfo>&
         if (t.type == "MP3") {
             MP3Track* track = new MP3Track(t.title, t.artists, t.duration_seconds, t.bpm, t.extra_param1, t.extra_param2);
             library.push_back(track);
-            std::cout << "MP3Track created: " << track->get_bitrate() << " kbps" << std::endl;
         } else {
             WAVTrack* track = new WAVTrack(t.title, t.artists, t.duration_seconds, t.bpm, t.extra_param1, t.extra_param2);
             library.push_back(track);
-            std::cout << "WAVTrack created: " << track->get_sample_rate() << "Hz/"
-                      << track->get_bit_depth() << "bit" << std::endl;
         }
     }
     std::cout << "[INFO] Track library built: " << library.size() << " tracks loaded" << std::endl;
@@ -115,5 +113,6 @@ std::vector<std::string> DJLibraryService::getTrackTitles() const {
     for (AudioTrack* t : playlist.getTracks()) {
         titles.push_back(t->get_title());
     }
+    std::reverse(titles.begin(), titles.end());
     return titles; // Placeholder
 }

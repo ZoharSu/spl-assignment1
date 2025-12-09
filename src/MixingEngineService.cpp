@@ -10,7 +10,7 @@ MixingEngineService::MixingEngineService()
     : decks{nullptr, nullptr}, active_deck(1), auto_sync(false), bpm_tolerance(0)
 {
     // Your implementation here
-    std::cout << "[MixingEngineService] Initialized with 2 empty decks" << std::endl;
+    std::cout << "[MixingEngineService] Initialized with 2 empty decks." << std::endl;
 }
 
 /**
@@ -60,17 +60,6 @@ int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
 
     std::cout << "[Load Complete] \'" << track.get_title()
     << "\' is now loaded on deck " << target_deck << std::endl;
-
-    if (decks[active_deck] != nullptr) {
-        std::cout << "[Unload] Unloading previous deck "
-        << active_deck << " (" << decks[active_deck]->get_title()
-        << ")" << std::endl;
-
-        AudioTrack* tmp_active = decks[active_deck];
-        decks[active_deck] = nullptr;
-
-        delete tmp_active;
-    }
 
     active_deck = target_deck;
     std::cout << "[Active Deck] Switched to deck "
