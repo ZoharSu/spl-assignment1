@@ -6,7 +6,7 @@
 AudioTrack::AudioTrack(const std::string& title, const std::vector<std::string>& artists, 
                       int duration, int bpm, size_t waveform_samples)
     : title(title), artists(artists), duration_seconds(duration), bpm(bpm), 
-      waveform_size(waveform_samples) {
+      waveform_data(nullptr), waveform_size(waveform_samples) {
 
     // Allocate memory for waveform analysis
     waveform_data = new double[waveform_size];
@@ -130,4 +130,8 @@ void AudioTrack::get_waveform_copy(double* buffer, size_t buffer_size) const {
     if (buffer && waveform_data && buffer_size <= waveform_size) {
         std::memcpy(buffer, waveform_data, buffer_size * sizeof(double));
     }
+}
+
+void AudioTrack::set_bpm(int new_bpm) {
+    bpm = new_bpm;
 }

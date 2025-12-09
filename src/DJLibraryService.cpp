@@ -8,14 +8,36 @@
 
 
 DJLibraryService::DJLibraryService(const Playlist& playlist) 
-    : playlist(playlist) {}
+    : playlist(playlist), library() {}
 /**
  * @brief Load a playlist from track indices referencing the library
  * @param library_tracks Vector of track info from config
  */
+
+DJLibraryService::~DJLibraryService() {
+    for (int i = 0; i < library.size(); i++) {
+        AudioTrack* tmp = library[i];
+        library[i] = nullptr;
+        delete tmp;
+    }
+}
+
 void DJLibraryService::buildLibrary(const std::vector<SessionConfig::TrackInfo>& library_tracks) {
     //Todo: Implement buildLibrary method
-    std::cout << "TODO: Implement DJLibraryService::buildLibrary method\n"<< library_tracks.size() << " tracks to be loaded into library.\n";
+    // std::cout << "TODO: Implement DJLibraryService::buildLibrary method\n"<< library_tracks.size() << " tracks to be loaded into library.\n";
+    for (const SessionConfig::TrackInfo& t : library_tracks) {
+        if (t.type == "MP3") {
+            MP3Track* track = new MP3Track(t.title, t.artists, t.duration_seconds, t.bpm, t.extra_param1, t.extra_param2);
+            library.push_back(track);
+            std::cout << "MP3Track created: " << track->get_bitrate() << " kbps" << std::endl;
+        } else {
+            WAVTrack* track = new WAVTrack(t.title, t.artists, t.duration_seconds, t.bpm, t.extra_param1, t.extra_param2);
+            library.push_back(track);
+            std::cout << "WAVTrack created: " << track->get_sample_rate() << "Hz/"
+                      << track->get_bit_depth() << "bit" << std::endl;
+        }
+    }
+    std::cout << "[INFO] Track library built: " << library.size() << " tracks loaded" << std::endl;
 }
 
 /**
@@ -54,15 +76,36 @@ Playlist& DJLibraryService::getPlaylist() {
  */
 AudioTrack* DJLibraryService::findTrack(const std::string& track_title) {
     // Your implementation here
-    return nullptr; // Placeholder
+    return playlist.find_track(track_title);
 }
 
 void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name, 
                                                const std::vector<int>& track_indices) {
     // Your implementation here
-    // For now, add a placeholder to fix the linker error
-    (void)playlist_name;  // Suppress unused parameter warning
-    (void)track_indices;  // Suppress unused parameter warning
+    std::cout << "[INFO] Loading playlist: " << playlist_name << std::endl;
+    playlist = Playlist{playlist_name}; // IMPLEMENT MOVE ASSIGNMENT ON PLAYLIST
+    for (int i : track_indices) {
+        if (i >= 1 && i <= library.size()) {
+            AudioTrack* t = library[i-1];
+            PointerWrapper<AudioTrack> clone = t->clone();
+            if (clone) {
+                clone->load();
+                clone->analyze_beatgrid();
+                playlist.add_track(clone.release());
+                std::cout << "Added \'" << t->get_title() << "\' to playlist \'"
+                    << playlist_name << "\'" << std::endl;
+            } else {
+                std::cerr << "[ERROR] Clone failed at loadPlaylistFromIndices" << std::endl;
+            }
+        } else {
+            std::cout << "[WARNING] Invalid track index: " << i << std::endl;
+        }
+    }
+    std::cout << "[INFO] Playlist loaded: " << playlist_name << " (" << playlist.get_track_count()
+    << " tracks)" << std::endl;
+    // // For now, add a placeholder to fix the linker error
+    // (void)playlist_name;  // Suppress unused parameter warning
+    // (void)track_indices;  // Suppress unused parameter warning
 }
 /**
  * TODO: Implement getTrackTitles method
@@ -70,5 +113,9 @@ void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name,
  */
 std::vector<std::string> DJLibraryService::getTrackTitles() const {
     // Your implementation here
-    return std::vector<std::string>(); // Placeholder
+    std::vector<std::string> titles;
+    for (AudioTrack* t : playlist.getTracks()) {
+        titles.push_back(t->get_title());
+    }
+    return titles; // Placeholder
 }

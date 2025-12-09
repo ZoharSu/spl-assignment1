@@ -7,9 +7,10 @@
  * TODO: Implement MixingEngineService constructor
  */
 MixingEngineService::MixingEngineService()
-    : active_deck(0)
+    : decks{nullptr, nullptr}, active_deck(1), auto_sync(false), bpm_tolerance(0)
 {
     // Your implementation here
+    std::cout << "[MixingEngineService] Initialized with 2 empty decks" << std::endl;
 }
 
 /**
@@ -17,6 +18,13 @@ MixingEngineService::MixingEngineService()
  */
 MixingEngineService::~MixingEngineService() {
     // Your implementation here
+    std::cout << "[MixingEngineService] Cleaning up decks..." << std::endl;
+    AudioTrack* tmp0 = decks[0];
+    AudioTrack* tmp1 = decks[1];
+    decks[0] = nullptr;
+    decks[1] = nullptr;
+    delete tmp0;
+    delete tmp1;
 }
 
 
@@ -27,7 +35,49 @@ MixingEngineService::~MixingEngineService() {
  */
 int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
     // Your implementation here
-    return -1; // Placeholder
+
+    std::cout << "\n=== Loading Track to Deck ===" << std::endl;
+    PointerWrapper<AudioTrack> clone = track.clone();
+
+    if (!clone) {
+        std::cerr << "[ERROR] Track: \"" << track.get_title()
+            << "\" failed to clone" << std::endl;
+        return -1;
+    }
+
+    int target_deck = 1 - active_deck;
+    std::cout << "[Deck Switch] Target deck: "
+    << target_deck << std::endl;
+
+    clone->load();
+    clone->analyze_beatgrid();
+
+    if (auto_sync && decks[active_deck] != nullptr && !can_mix_tracks(clone))
+        sync_bpm(clone);
+
+    AudioTrack* tmp_target = decks[target_deck];
+    decks[target_deck] = clone.release();
+
+    std::cout << "[Load Complete] \'" << track.get_title()
+    << "\' is now loaded on deck " << target_deck << std::endl;
+
+    if (decks[active_deck] != nullptr) {
+        std::cout << "[Unload] Unloading previous deck "
+        << active_deck << " (" << decks[active_deck]->get_title()
+        << ")" << std::endl;
+
+        AudioTrack* tmp_active = decks[active_deck];
+        decks[active_deck] = nullptr;
+
+        delete tmp_active;
+    }
+
+    active_deck = target_deck;
+    std::cout << "[Active Deck] Switched to deck "
+    << target_deck << std::endl;
+
+    delete tmp_target;
+    return active_deck;
 }
 
 /**
@@ -55,7 +105,10 @@ void MixingEngineService::displayDeckStatus() const {
  */
 bool MixingEngineService::can_mix_tracks(const PointerWrapper<AudioTrack>& track) const {
     // Your implementation here
-    return false; // Placeholder
+    if (decks[active_deck] == nullptr || !track)
+        return false;
+
+    return std::abs(decks[active_deck]->get_bpm() - track->get_bpm()) <= bpm_tolerance; // Placeholder
 }
 
 /**
@@ -64,4 +117,13 @@ bool MixingEngineService::can_mix_tracks(const PointerWrapper<AudioTrack>& track
  */
 void MixingEngineService::sync_bpm(const PointerWrapper<AudioTrack>& track) const {
     // Your implementation here
+    if (decks[active_deck] == nullptr || !track)
+        return;
+
+    int track_bpm = track->get_bpm();
+    int avg_bpm = (track_bpm + decks[active_deck]->get_bpm()) / 2;
+    track->set_bpm(avg_bpm);
+
+    std::cout << "[Sync BPM] Syncing BPM from "
+    << track_bpm << " to " << avg_bpm << std::endl;
 }
