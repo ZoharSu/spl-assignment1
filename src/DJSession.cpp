@@ -178,7 +178,7 @@ void DJSession::simulate_dj_performance() {
         }
 
         for (AudioTrack *t : library_service.getPlaylist().getTracks()) { 
-            std::cout << "\n–- Processing: <track_title> –-";
+            std::cout << "\n–- Processing: " << t->get_title() << " –-";
             stats.tracks_processed++;
             load_track_to_controller(t->get_title());
             load_track_to_mixer_deck(t->get_title());
