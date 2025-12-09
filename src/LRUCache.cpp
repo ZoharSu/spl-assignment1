@@ -26,7 +26,7 @@ bool LRUCache::put(PointerWrapper<AudioTrack> track) {
         return false;
     }
     bool evicted = false;
-    int i = size();
+    size_t i = size();
 
     if (i == max_size) {
         evictLRU();
@@ -81,9 +81,9 @@ size_t LRUCache::findSlot(const std::string& track_id) const {
  * TODO: Implement the findLRUSlot() method for LRUCache
  */
 size_t LRUCache::findLRUSlot() const {
-    int min = max_size;
+    size_t min = max_size;
 
-    for (int i = 0; i < slots.size(); i++) {
+    for (size_t i = 0; i < slots.size(); i++) {
         if (slots[i].isOccupied() && (min == max_size ||
             slots[i].getLastAccessTime() < slots[min].getLastAccessTime()))
             min = i;

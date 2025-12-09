@@ -60,6 +60,12 @@ public:
         bpm_tolerance = tolerance;
     }
 
+    // Rule of 5
+    MixingEngineService(const MixingEngineService&) = delete;
+    MixingEngineService& operator=(const MixingEngineService&) = delete;
+
+    MixingEngineService(MixingEngineService&&) = delete;
+    MixingEngineService& operator=(MixingEngineService&&) = delete;
 };
 
 #endif // MIXINGENGINESERVICE_H

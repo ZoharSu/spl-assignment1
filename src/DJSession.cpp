@@ -152,7 +152,7 @@ void DJSession::simulate_dj_performance() {
     std::cout << "\n--- Processing Tracks ---" << std::endl;
 
     std::vector<std::string> names;
-    unsigned long int i = 0;
+    size_t i = 0;
     if (play_all) {
         for (const auto& pair : session_config.playlists)
             names.push_back(pair.first);
@@ -277,7 +277,7 @@ void DJSession::print_session_summary() const {
 }
 
 std::vector<std::string> DJSession::sortStrings(std::vector<std::string> names) {
-    unsigned long int i, j, min;
+    size_t i, j, min;
     for (i = 0; i < names.size(); i++) {
         min = i;
         for (j = i; j < names.size(); j++)
@@ -293,7 +293,7 @@ std::vector<std::string> DJSession::sortStrings(std::vector<std::string> names) 
 }
 
 bool DJSession::strLessThan(std::string lhs, std::string rhs) {
-    unsigned long int i;
+    size_t i;
     for (i = 0; i < rhs.size(); i++)
         if (i >= lhs.size() || lhs[i] < rhs[i])
             return true;

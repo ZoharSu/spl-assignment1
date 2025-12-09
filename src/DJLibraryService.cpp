@@ -18,7 +18,7 @@ void DJLibraryService::buildLibrary(const std::vector<SessionConfig::TrackInfo>&
         if (track.type == "MP3") {
             MP3Track *t = new MP3Track {
                 track.title, track.artists, track.duration_seconds,
-                track.bpm, track.extra_param1, track.extra_param2
+                track.bpm, track.extra_param1, bool(track.extra_param2)
             };
             std::cout << "MP3Track created: " << t->get_bitrate() << " kbps" << std::endl;
             library.push_back(t);
@@ -78,7 +78,7 @@ void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name,
     playlist = Playlist(playlist_name);
     int count = 0;
 
-    for (unsigned long int i : track_indices) {
+    for (size_t i : track_indices) {
         if (i < 1 ||  i > library.size()) {
             std::cout << "[WARNING] Invalid track index: " << i << std::endl;
             continue;
