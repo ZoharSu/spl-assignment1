@@ -52,7 +52,10 @@ int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
     clone->load();
     clone->analyze_beatgrid();
 
-    if (auto_sync && decks[active_deck] != nullptr && !can_mix_tracks(clone))
+	if (auto_sync && decks[active_deck] == nullptr)
+        std::cout << "[Sync BPM] Cannot sync - one of the decks is empty." << std::endl;
+
+    else if (auto_sync && !can_mix_tracks(clone))
         sync_bpm(clone);
 
     AudioTrack* tmp_target = decks[target_deck];
@@ -106,10 +109,8 @@ bool MixingEngineService::can_mix_tracks(const PointerWrapper<AudioTrack>& track
  */
 void MixingEngineService::sync_bpm(const PointerWrapper<AudioTrack>& track) const {
     // Your implementation here
-    if (decks[active_deck] == nullptr || !track) {
-        std::cout << "[Sync BPM] Cannot sync - one of the decks is empty." << std::endl;
+    if (decks[active_deck] == nullptr || !track)
         return;
-    }
 
     int track_bpm = track->get_bpm();
     int avg_bpm = (track_bpm + decks[active_deck]->get_bpm()) / 2;
